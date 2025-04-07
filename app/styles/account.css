@@ -1,0 +1,59 @@
+form{
+  max-width: 100%;
+  margin-top: 40px;
+}
+button{
+  white-space: nowrap;
+  text-align: center;
+}
+.chat{
+  height: 500px;
+  width: 400px;
+  position: absolute;
+  right: 0;
+}
+.chat-input{
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+}
+.chat-form__input{
+  width: 80%;
+}
+
+.chat-container{
+  width: 60%; /* Задаем ширину контейнера */
+  margin: 0 auto; /* Устанавливаем автоматические внешние отступы по бокам */
+  padding: 20px;
+  text-align: center;
+}
+
+.chat-box {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  margin: 0 auto;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-box div {
+  margin-bottom: 10px;
+}
+
+.chat-box .user-msg {
+  background-color: #007bff;
+  color: white;
+  border-radius: 15px;
+  padding: 10px;
+  margin-left: auto;
+}
+
+.chat-box .bot-msg {
+  background-color: #ddd;
+  border-radius: 15px;
+  padding: 10px;
+  margin-right: auto;
+}
