@@ -20,19 +20,19 @@ var users_answer = {"admin": []};
 chat_answer = "Please, give me page name";
 current_chat_admin = "admin";
 
-let browser;
-var bot_cookie;
-(async () => {
-    browser = await puppeteer.launch({headless: true, executablePath: "/usr/bin/google-chrome", args: [`--no-sandbox`, `--headless`, `--disable-gpu`, `--disable-dev-shm-usage`]});
-    const page = await browser.newPage();
-    await page.goto('http://127.0.0.1:5000/login');
-    await page.type("#floatingInput", "admin");
-    await page.type("#floatingPassword", db["admin"]);
-    await page.click("#submitForm");
-    await page.waitForNavigation();
-    bot_cookie = await browser.cookies();
-    console.log("Bot ready");
-}) ();
+// let browser;
+// var bot_cookie;
+// (async () => {
+//     browser = await puppeteer.launch({headless: true, executablePath: "/usr/bin/google-chrome", args: [`--no-sandbox`, `--headless`, `--disable-gpu`, `--disable-dev-shm-usage`]});
+//     const page = await browser.newPage();
+//     await page.goto('http://127.0.0.1:5000/login');
+//     await page.type("#floatingInput", "admin");
+//     await page.type("#floatingPassword", db["admin"]);
+//     await page.click("#submitForm");
+//     await page.waitForNavigation();
+//     bot_cookie = await browser.cookies();
+//     console.log("Bot ready");
+// }) ();
 
 function createSessionValue() {
     let result = '';
@@ -191,11 +191,12 @@ app.post("/chat-message", urlEncodedParser, async function(request, response){
     //var user_answer = request.body.messaage;
     //console.log(decodeURI(request.query.chat));
     chat_name = sessions[request.cookies.session];
+    is_admin = 0;
     if(chat_name == "admin"){
         chat_name = request.body.user;
+        is_admin = 1;
     }
     current_chat_admin = chat_name;
-    console.log(request.body.user);
     message = request.body.message;
     history = users_answer[chat_name];
     if(message == "/clear"){
@@ -203,14 +204,31 @@ app.post("/chat-message", urlEncodedParser, async function(request, response){
         users_answer[chat_name] = history;
         response.redirect("account");
     }
-    else if(history.length <= 3){
+    else if(history.length > 6){
+        response.status(400).send("Too much messages. Clearing chat...");
+        history = [];
+        users_answer[chat_name] = history;
+    }
+    else if(history.length <= 6){
         history.push(message);
         users_answer[chat_name] = history;
-        const page = await browser.newPage();
-        await page.goto("http://127.0.0.1:5000/account");
-        response.redirect("account");
+        if(is_admin == 0){
+            let browser = await puppeteer.launch({headless: true, executablePath: "/usr/bin/google-chrome", args: [`--no-sandbox`, `--headless`, `--disable-gpu`, `--disable-dev-shm-usage`]});
+            const page = await browser.newPage();
+            page.on('dialog', async dialog => {
+                await dialog.dismiss();
+            });
+            await page.goto('http://127.0.0.1:5000/login');
+            await page.type("#floatingInput", "admin");
+            await page.type("#floatingPassword", db["admin"]);
+            await page.click("#submitForm");
+            await page.waitForNavigation();
+            await page.goto("http://127.0.0.1:5000/account");
+            await page.close();
+            browser.close();
+        }
+        response.status(200).send("Message has been send successful");
     }
-    console.log(history);
 })
 
 app.listen(5000, function(){
