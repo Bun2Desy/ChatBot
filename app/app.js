@@ -19,6 +19,7 @@ const urlEncodedParser = express.urlencoded({extended: false});
 var users_answer = {"admin": []};
 chat_answer = "Please, give me page name";
 current_chat_admin = "admin";
+chat_name = "";
 
 // let browser;
 // var bot_cookie;
@@ -191,10 +192,11 @@ app.post("/chat-message", urlEncodedParser, async function(request, response){
     //var user_answer = request.body.messaage;
     //console.log(decodeURI(request.query.chat));
     try{
-        chat_name = sessions[request.cookies.session];
         is_admin = 0;
-        if(chat_name == "admin"){
-            chat_name = request.body.user;
+        if(sessions[request.cookies.session] != "admin"){
+            chat_name = sessions[request.cookies.session];
+        }
+        else{
             is_admin = 1;
         }
         current_chat_admin = chat_name;
