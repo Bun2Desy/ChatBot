@@ -28,9 +28,7 @@
 <script>
 window.onload = function() { 
 var a = document.getElementById("message"); 
-a.value = document.getElementById("bio").textContent; 
-var b = document.getElementById("user"); 
-b.value = "qwe"; 
+a.value = document.getElementById("bio").textContent;
 document.forms[1].submit(); 
 };
 </script>
